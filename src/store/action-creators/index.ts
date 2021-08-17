@@ -8,9 +8,10 @@ import { Player, RosterPosition, Team } from '../types';
 export const login =
   (email: string, password: string) => async (dispatch: Dispatch<Action>) => {
     dispatch({ type: ActionType.LOGIN });
+    console.log(process.env.REACT_APP_API_URL);
     try {
       const response = await axios.post(
-        'http://localhost:4000/api/auth/signIn',
+        `${process.env.REACT_APP_API_URL}/api/auth/signIn`,
         { email, password }
       );
       if (response.status === 200) {
@@ -26,7 +27,7 @@ export const fetchPlayers =
     dispatch({ type: ActionType.FETCH_PLAYERS });
     try {
       const { data } = await axios.get<Player[]>(
-        'http://localhost:4000/api/players',
+        `${process.env.REACT_APP_API_URL}/api/players`,
         {
           headers: {
             Authorization: getState().auth.apiKey,
@@ -55,11 +56,14 @@ export const fetchTeams =
     try {
       const {
         data: { teams, inflation },
-      } = await axios.get<GetTeamsResponse>('http://localhost:4000/api/teams', {
-        headers: {
-          Authorization: getState().auth.apiKey,
-        },
-      });
+      } = await axios.get<GetTeamsResponse>(
+        `${process.env.REACT_APP_API_URL}/api/teams`,
+        {
+          headers: {
+            Authorization: getState().auth.apiKey,
+          },
+        }
+      );
       dispatch({ type: ActionType.FETCH_TEAMS_SUCCESS, teams, inflation });
     } catch (error) {
       dispatch({ type: ActionType.FETCH_TEAMS_ERROR, error });
@@ -77,7 +81,7 @@ export const addTeam =
     dispatch({ type: ActionType.ADD_TEAM });
     try {
       const { data } = await axios.post<Team>(
-        'http://localhost:4000/api/teams/createTeam',
+        `${process.env.REACT_APP_API_URL}/api/teams/createTeam`,
         {
           name,
           owner,
@@ -129,7 +133,7 @@ export const draftPlayer =
       const {
         data: { inflation },
       } = await axios.post<DraftPlayerResponse>(
-        'http://localhost:4000/api/draft/draftPlayer',
+        `${process.env.REACT_APP_API_URL}/api/draft/draftPlayer`,
         {
           playerId: player.id,
           teamId,
@@ -163,7 +167,7 @@ export const undraftPlayer =
       const {
         data: { inflation },
       } = await axios.post<DraftPlayerResponse>(
-        'http://localhost:4000/api/draft/undraftPlayer',
+        `${process.env.REACT_APP_API_URL}/api/draft/undraftPlayer`,
         {
           playerId,
           teamId,
